@@ -421,7 +421,8 @@ LOCAL_LABEL(CheckCardTable):
     //
     ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
     nop
-
+    cbz  x12, LOCAL_LABEL(SkipEphemeralCheck)
+    nop
     cmp  x15,  x12
     nop
 
