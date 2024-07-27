@@ -419,8 +419,6 @@ LOCAL_LABEL(CheckCardTable):
     nop
     // Branch to Exit if the reference is not in the Gen0 heap
     //
-    ldr  x17, LOCAL_LABEL(wbs_card_table)
-    nop
     ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
     nop
     cbz  x12, LOCAL_LABEL(SkipEphemeralCheck)
@@ -444,10 +442,12 @@ LOCAL_LABEL(CheckCardTable):
 LOCAL_LABEL(SkipEphemeralCheck):
     nop
     // Check if we need to update the card table
-    add  x15, x17, x14, lsr #11
+    ldr  x12, LOCAL_LABEL(wbs_card_table)
+    nop
+    add  x15, x12, x14, lsr #11
     ldrb w12, [x15]
     nop
-    cmp  x17, 0xFF
+    cmp  x12, 0xFF
     nop
     beq  LOCAL_LABEL(Exit)
     nop
