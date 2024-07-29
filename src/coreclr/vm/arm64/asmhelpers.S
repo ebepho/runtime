@@ -415,6 +415,30 @@ LOCAL_LABEL(ShadowUpdateDisabled):
     nop
 #endif
 
+LOCAL_LABEL(CheckCardTable):
+    nop
+    // Branch to Exit if the reference is not in the Gen0 heap
+    //
+    ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
+    nop
+    cbz  x12, LOCAL_LABEL(SkipEphemeralCheck)
+    nop
+    cmp  x15,  x12
+    nop
+
+    ldr  x12, LOCAL_LABEL(wbs_ephemeral_high)
+    nop
+
+    // Compare against the upper bound if the previous comparison indicated
+    // that the destination address is greater than or equal to the lower
+    // bound. Otherwise, set the C flag (specified by the 0x2) so that the
+    // branch to exit is taken.
+    ccmp x15, x12, #0x2, hs
+    nop
+
+    bhs  LOCAL_LABEL(Exit)
+    nop
+
 LOCAL_LABEL(SkipEphemeralCheck):
     nop
     // Check if we need to update the card table
@@ -433,32 +457,6 @@ LOCAL_LABEL(UpdateCardTable):
     mov  x12, 0xFF
     strb w12, [x15]
     nop
-
-
-LOCAL_LABEL(CheckCardTable):
-    nop
-    // Branch to Exit if the reference is not in the Gen0 heap
-    //
-    ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
-    nop
-    cbz  x12, LOCAL_LABEL(Exit)
-    nop
-    cmp  x15,  x12
-    nop
-
-    ldr  x12, LOCAL_LABEL(wbs_ephemeral_high)
-    nop
-
-    // Compare against the upper bound if the previous comparison indicated
-    // that the destination address is greater than or equal to the lower
-    // bound. Otherwise, set the C flag (specified by the 0x2) so that the
-    // branch to exit is taken.
-    ccmp x15, x12, #0x2, hs
-    nop
-
-    bhs  LOCAL_LABEL(Exit)
-    nop
-
 
 #ifdef FEATURE_MANUALLY_MANAGED_CARD_BUNDLES
     // Check if we need to update the card bundle table
