@@ -426,6 +426,9 @@ LOCAL_LABEL(CheckCardTable):
     cmp  x15,  x12
     nop
 
+    blo LOCAL_LABEL(SkipEphemeralCheck) // If x15 < x12, skip the check
+    nop
+
     ldr  x12, LOCAL_LABEL(wbs_ephemeral_high)
     nop
 
@@ -433,10 +436,10 @@ LOCAL_LABEL(CheckCardTable):
     // that the destination address is greater than or equal to the lower
     // bound. Otherwise, set the C flag (specified by the 0x2) so that the
     // branch to exit is taken.
-    ccmp x15, x12, #0x2, hs
+    cmp  x15, x12
     nop
 
-    bhs  LOCAL_LABEL(Exit)
+    bhs  LOCAL_LABEL(Exit) // If x15 >= x12, branch to Exit
     nop
 
 LOCAL_LABEL(SkipEphemeralCheck):
