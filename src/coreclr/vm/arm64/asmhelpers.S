@@ -410,22 +410,17 @@ LOCAL_LABEL(ShadowUpdateDisabled):
 LOCAL_LABEL(CheckCardTable):
     // Branch to Exit if the reference is not in the Gen0 heap
     //
-    // Load the base address for ephemeral low and high addresses into x12
-    adrp x12, LOCAL_LABEL(wbs_ephemeral_low)
-    add  x12, x12, :lo12:LOCAL_LABEL(wbs_ephemeral_low) 
-
-    // Load both wbs_ephemeral_low and wbs_ephemeral_high into x12 and x13 respectively
-    ldp  x12, x13, [x12]  
-    
+    ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
     cbz  x12, LOCAL_LABEL(SkipEphemeralCheck)
 
     cmp  x15,  x12 
+    ldr  x12, LOCAL_LABEL(wbs_ephemeral_high)
 
     // Compare against the upper bound if the previous comparison indicated
     // that the destination address is greater than or equal to the lower
     // bound. Otherwise, set the C flag (specified by the 0x2) so that the
     // branch to exit is taken.
-    ccmp x15, x13, #0x2, hs
+    ccmp x15, x12, #0x2, hs
 
     bhs  LOCAL_LABEL(Exit)
 
