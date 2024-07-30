@@ -423,6 +423,7 @@ LOCAL_LABEL(CheckCardTable):
     // Branch to Exit if the reference is not in the Gen0 heap
     //
     ldr  x12, LOCAL_LABEL(wbs_ephemeral_low)
+    cbz  x12, LOCAL_LABEL(Exit)
 
     cmp  x15,  x12 
     ldr  x12, LOCAL_LABEL(wbs_ephemeral_high)
